@@ -5,8 +5,10 @@ from email.message import EmailMessage
 from typing import Optional
 import requests
 import jwt
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
 from fastapi import FastAPI, HTTPException, Depends, Header
-from fastapi.responses import FileResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, EmailStr
 from passlib.context import CryptContext
@@ -15,8 +17,9 @@ ROOT = Path(__file__).resolve().parent.parent
 DB = Path(os.getenv('NOVATRADE_DB', str(ROOT / 'novatrade.db')))
 SECRET = os.getenv('JWT_SECRET', 'novatrade-demo-secret-change-me')
 BASE_URL = os.getenv('APP_BASE_URL', 'https://novatrade-p49i.onrender.com').rstrip('/')
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', '').strip()
 pwd = CryptContext(schemes=['bcrypt'], deprecated='auto')
-app = FastAPI(title='NovaTrade', version='4.0')
+app = FastAPI(title='NovaTrade', version='5.0')
 app.mount('/static', StaticFiles(directory=str(ROOT / 'frontend')), name='static')
 STOCKS = {'RELIANCE': ('Reliance Industries', 1428), 'TCS': ('Tata Consultancy Services', 3125), 'INFY': ('Infosys', 1510), 'HDFCBANK': ('HDFC Bank', 962), 'ICICIBANK': ('ICICI Bank', 1385), 'SBIN': ('State Bank of India', 820), 'ITC': ('ITC', 411), 'BHARTIARTL': ('Bharti Airtel', 1812), 'WIPRO': ('Wipro', 246), 'LT': ('Larsen & Toubro', 3890)}
 
@@ -25,7 +28,7 @@ def db():
     c = sqlite3.connect(DB)
     c.row_factory = sqlite3.Row
     c.executescript('''
-    CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY,email TEXT UNIQUE,password TEXT,name TEXT,created_at TEXT,verified INTEGER DEFAULT 0);
+    CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY,email TEXT UNIQUE,password TEXT,name TEXT,created_at TEXT,verified INTEGER DEFAULT 0,google_sub TEXT UNIQUE);
     CREATE TABLE IF NOT EXISTS portfolios(user_id INTEGER PRIMARY KEY,cash REAL,starting_cash REAL);
     CREATE TABLE IF NOT EXISTS holdings(user_id INTEGER,symbol TEXT,qty INTEGER,avg_price REAL,PRIMARY KEY(user_id,symbol));
     CREATE TABLE IF NOT EXISTS orders(id INTEGER PRIMARY KEY,user_id INTEGER,symbol TEXT,side TEXT,qty INTEGER,price REAL,status TEXT,mode TEXT,created_at TEXT);
@@ -35,7 +38,9 @@ def db():
     cols = [r['name'] for r in c.execute('PRAGMA table_info(users)').fetchall()]
     if 'verified' not in cols:
         c.execute('ALTER TABLE users ADD COLUMN verified INTEGER DEFAULT 0')
-        c.commit()
+    if 'google_sub' not in cols:
+        c.execute('ALTER TABLE users ADD COLUMN google_sub TEXT')
+    c.commit()
     return c
 
 
@@ -108,6 +113,9 @@ class Login(BaseModel):
     email: EmailStr
     password: str
 
+class GoogleLogin(BaseModel):
+    credential: str
+
 class VerifyRequest(BaseModel): token: str
 class ForgotRequest(BaseModel): email: EmailStr
 class ResetRequest(BaseModel): token: str; password: str = Field(min_length=6)
@@ -115,10 +123,77 @@ class Order(BaseModel): symbol: str; side: str; qty: int = Field(gt=0); mode: st
 class Bot(BaseModel): enabled: bool; symbol: str = 'RELIANCE'; risk: float = Field(1, ge=.1, le=5); stop: float = Field(2, ge=.5, le=20); target: float = Field(4, ge=.5, le=50)
 
 @app.get('/')
-def home(): return FileResponse(ROOT / 'frontend' / 'index.html')
+def home():
+    html = (ROOT / 'frontend' / 'index.html').read_text(encoding='utf-8')
+    if GOOGLE_CLIENT_ID:
+        inject = '''
+<style>
+.google-login-wrap{margin-top:14px;text-align:center}.google-or{display:flex;align-items:center;gap:10px;margin:13px 0;color:#8a9893;font-size:12px}.google-or:before,.google-or:after{content:"";height:1px;background:#e0ece7;flex:1}.google-login-btn{display:flex;justify-content:center}
+</style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+window.handleNovaGoogle = async function(response){
+  try{
+    const r=await fetch('/api/auth/google',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({credential:response.credential})});
+    const d=await r.json();
+    if(!r.ok) throw Error(d.detail||'Google sign-in failed');
+    localStorage.setItem('nt',d.token); location.reload();
+  }catch(e){
+    const m=document.getElementById('authMsg'); if(m){m.textContent=e.message;m.style.display='block';}
+  }
+};
+window.addEventListener('load',function(){
+  const btn=document.getElementById('authBtn'); if(!btn) return;
+  const wrap=document.createElement('div'); wrap.className='google-login-wrap';
+  wrap.innerHTML='<div class="google-or"><span>or continue with</span></div><div class="google-login-btn" id="googleBtn"></div>';
+  btn.parentNode.insertBefore(wrap,btn.nextSibling);
+  const wait=setInterval(function(){
+    if(window.google&&google.accounts&&google.accounts.id){
+      clearInterval(wait);
+      google.accounts.id.initialize({client_id:''' + repr(GOOGLE_CLIENT_ID) + ''',callback:window.handleNovaGoogle});
+      google.accounts.id.renderButton(document.getElementById('googleBtn'),{theme:'outline',size:'large',shape:'rectangular',width:330,text:'signin_with'});
+    }
+  },100);
+  setTimeout(()=>clearInterval(wait),10000);
+});
+</script>
+'''
+        html = html.replace('</body>', inject + '</body>')
+    return HTMLResponse(html)
 
 @app.get('/api/health')
-def health(): return {'ok': True, 'service': 'NovaTrade', 'mode': 'paper', 'email_configured': email_configured()}
+def health(): return {'ok': True, 'service': 'NovaTrade', 'mode': 'paper', 'email_configured': email_configured(), 'google_configured': bool(GOOGLE_CLIENT_ID)}
+
+@app.get('/api/auth/google-config')
+def google_config(): return {'enabled': bool(GOOGLE_CLIENT_ID)}
+
+@app.post('/api/auth/google')
+def google_login(a: GoogleLogin):
+    if not GOOGLE_CLIENT_ID:
+        raise HTTPException(503, 'Google Sign-In is not configured yet. Add GOOGLE_CLIENT_ID in Render.')
+    try:
+        info = id_token.verify_oauth2_token(a.credential, google_requests.Request(), GOOGLE_CLIENT_ID)
+    except Exception:
+        raise HTTPException(401, 'Invalid Google credential')
+    if info.get('iss') not in ('accounts.google.com', 'https://accounts.google.com') or not info.get('email_verified'):
+        raise HTTPException(401, 'Google account email could not be verified')
+    email = str(info.get('email','')).lower().strip()
+    name = str(info.get('name') or info.get('given_name') or 'Trader').strip() or 'Trader'
+    sub = str(info.get('sub','')).strip()
+    if not email or not sub:
+        raise HTTPException(400, 'Google did not return a usable account')
+    c = db()
+    r = c.execute('SELECT * FROM users WHERE google_sub=? OR email=?', (sub, email)).fetchone()
+    if r:
+        c.execute('UPDATE users SET verified=1,google_sub=?,name=? WHERE id=?', (sub, name, r['id']))
+        c.commit()
+        return {'token': token(r['id']), 'user': {'id': r['id'], 'name': name}}
+    cur = c.execute('INSERT INTO users(email,password,name,created_at,verified,google_sub) VALUES(?,?,?,?,1,?)', (email, pwd.hash(secrets.token_urlsafe(24)), name, datetime.now(timezone.utc).isoformat(), sub))
+    u = cur.lastrowid
+    c.execute('INSERT INTO portfolios VALUES(?,?,?)', (u, 100000, 100000))
+    c.execute('INSERT INTO bots VALUES(?,?,?,?,?,?)', (u, 0, 'RELIANCE', 1, 2, 4))
+    c.commit()
+    return {'token': token(u), 'user': {'id': u, 'name': name}}
 
 @app.post('/api/auth/signup')
 def signup(a: Auth):
