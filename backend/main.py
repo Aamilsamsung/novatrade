@@ -11,19 +11,9 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel,Field,EmailStr
 from passlib.context import CryptContext
-ROOT=Path(__file__).resolve().parent.parent
-DB=Path(os.getenv('NOVATRADE_DB',str(ROOT/'novatrade.db')))
-SECRET=os.getenv('JWT_SECRET','novatrade-demo-secret-change-me')
-BASE_URL=os.getenv('APP_BASE_URL','https://novatrade-p49i.onrender.com').rstrip('/')
-GOOGLE_CLIENT_ID=os.getenv('GOOGLE_CLIENT_ID','').strip()
-pwd=CryptContext(schemes=['bcrypt'],deprecated='auto')
-app=FastAPI(title='NovaTrade',version='6.0')
-app.mount('/static',StaticFiles(directory=str(ROOT/'frontend')),name='static')
-STOCKS={'RELIANCE':('Reliance Industries',1428),'TCS':('Tata Consultancy Services',3125),'INFY':('Infosys',1510),'HDFCBANK':('HDFC Bank',962),'ICICIBANK':('ICICI Bank',1385),'SBIN':('State Bank of India',820),'ITC':('ITC',411),'BHARTIARTL':('Bharti Airtel',1812),'WIPRO':('Wipro',246),'LT':('Larsen & Toubro',3890)}
+ROOT=Path(__file__).resolve().parent.parent;DB=Path(os.getenv('NOVATRADE_DB',str(ROOT/'novatrade.db')));SECRET=os.getenv('JWT_SECRET','novatrade-demo-secret-change-me');BASE_URL=os.getenv('APP_BASE_URL','https://novatrade-p49i.onrender.com').rstrip('/');GOOGLE_CLIENT_ID=os.getenv('GOOGLE_CLIENT_ID','').strip();pwd=CryptContext(schemes=['bcrypt'],deprecated='auto');app=FastAPI(title='NovaTrade',version='6.1');app.mount('/static',StaticFiles(directory=str(ROOT/'frontend')),name='static');STOCKS={'RELIANCE':('Reliance Industries',1428),'TCS':('Tata Consultancy Services',3125),'INFY':('Infosys',1510),'HDFCBANK':('HDFC Bank',962),'ICICIBANK':('ICICI Bank',1385),'SBIN':('State Bank of India',820),'ITC':('ITC',411),'BHARTIARTL':('Bharti Airtel',1812),'WIPRO':('Wipro',246),'LT':('Larsen & Toubro',3890)}
 def db():
- c=sqlite3.connect(DB);c.row_factory=sqlite3.Row
- c.executescript("""CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY,email TEXT UNIQUE,password TEXT,name TEXT,created_at TEXT,verified INTEGER DEFAULT 0,google_sub TEXT UNIQUE);CREATE TABLE IF NOT EXISTS portfolios(user_id INTEGER PRIMARY KEY,cash REAL,starting_cash REAL);CREATE TABLE IF NOT EXISTS holdings(user_id INTEGER,symbol TEXT,qty INTEGER,avg_price REAL,PRIMARY KEY(user_id,symbol));CREATE TABLE IF NOT EXISTS orders(id INTEGER PRIMARY KEY,user_id INTEGER,symbol TEXT,side TEXT,qty INTEGER,price REAL,status TEXT,mode TEXT,created_at TEXT);CREATE TABLE IF NOT EXISTS bots(user_id INTEGER PRIMARY KEY,enabled INTEGER,symbol TEXT,risk REAL,stop REAL,target REAL);CREATE TABLE IF NOT EXISTS auth_tokens(id INTEGER PRIMARY KEY,user_id INTEGER,token_hash TEXT UNIQUE,kind TEXT,expires_at TEXT,used INTEGER DEFAULT 0,created_at TEXT);CREATE TABLE IF NOT EXISTS settings(user_id INTEGER PRIMARY KEY,notifications INTEGER DEFAULT 1,trade_alerts INTEGER DEFAULT 1);CREATE TABLE IF NOT EXISTS funding(id INTEGER PRIMARY KEY,user_id INTEGER,kind TEXT,amount REAL,method TEXT,note TEXT,created_at TEXT);""")
- c.commit();return c
+ c=sqlite3.connect(DB);c.row_factory=sqlite3.Row;c.executescript("""CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY,email TEXT UNIQUE,password TEXT,name TEXT,created_at TEXT,verified INTEGER DEFAULT 0,google_sub TEXT UNIQUE);CREATE TABLE IF NOT EXISTS portfolios(user_id INTEGER PRIMARY KEY,cash REAL,starting_cash REAL);CREATE TABLE IF NOT EXISTS holdings(user_id INTEGER,symbol TEXT,qty INTEGER,avg_price REAL,PRIMARY KEY(user_id,symbol));CREATE TABLE IF NOT EXISTS orders(id INTEGER PRIMARY KEY,user_id INTEGER,symbol TEXT,side TEXT,qty INTEGER,price REAL,status TEXT,mode TEXT,created_at TEXT);CREATE TABLE IF NOT EXISTS bots(user_id INTEGER PRIMARY KEY,enabled INTEGER,symbol TEXT,risk REAL,stop REAL,target REAL);CREATE TABLE IF NOT EXISTS auth_tokens(id INTEGER PRIMARY KEY,user_id INTEGER,token_hash TEXT UNIQUE,kind TEXT,expires_at TEXT,used INTEGER DEFAULT 0,created_at TEXT);CREATE TABLE IF NOT EXISTS settings(user_id INTEGER PRIMARY KEY,notifications INTEGER DEFAULT 1,trade_alerts INTEGER DEFAULT 1);CREATE TABLE IF NOT EXISTS funding(id INTEGER PRIMARY KEY,user_id INTEGER,kind TEXT,amount REAL,method TEXT,note TEXT,created_at TEXT);""");c.commit();return c
 def token(u):return jwt.encode({'sub':str(u),'exp':datetime.now(timezone.utc)+timedelta(days=1)},SECRET,algorithm='HS256')
 def uid(auth:Optional[str]=Header(None)):
  if not auth or not auth.lower().startswith('bearer '):raise HTTPException(401,'Login required')
@@ -62,10 +52,14 @@ class Bot(BaseModel):enabled:bool;symbol:str='RELIANCE';risk:float=Field(1,ge=.1
 class Settings(BaseModel):name:str=Field(min_length=1,max_length=80);notifications:bool=True;trade_alerts:bool=True
 class PasswordChange(BaseModel):current_password:str;new_password:str=Field(min_length=6)
 class Funding(BaseModel):amount:float=Field(gt=0);method:str='virtual';note:str=''
-def init_user(c,u):
- c.execute('INSERT OR IGNORE INTO portfolios VALUES(?,?,?)',(u,100000,100000));c.execute("INSERT OR IGNORE INTO bots VALUES(?,?,?,?,?,?)",(u,0,'RELIANCE',1,2,4));c.execute('INSERT OR IGNORE INTO settings(user_id)VALUES(?)',(u,))
+def init_user(c,u):c.execute('INSERT OR IGNORE INTO portfolios VALUES(?,?,?)',(u,100000,100000));c.execute("INSERT OR IGNORE INTO bots VALUES(?,?,?,?,?,?)",(u,0,'RELIANCE',1,2,4));c.execute('INSERT OR IGNORE INTO settings(user_id)VALUES(?)',(u,))
 @app.get('/')
-def home():return HTMLResponse((ROOT/'frontend'/'index.html').read_text(encoding='utf-8'))
+def home():
+ html=(ROOT/'frontend'/'index.html').read_text(encoding='utf-8')
+ if GOOGLE_CLIENT_ID:
+  script=f'''<script>window.addEventListener('load',function(){{var wait=setInterval(function(){{if(window.google&&google.accounts&&google.accounts.id){{clearInterval(wait);var b=document.getElementById('googleBtn');if(b&&!b.dataset.ready){{google.accounts.id.initialize({{client_id:{GOOGLE_CLIENT_ID!r},callback:async function(r){{try{{var x=await fetch('/api/auth/google',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify({{credential:r.credential}})}});var d=await x.json();if(!x.ok)throw Error(d.detail||'Google sign-in failed');localStorage.setItem('nt',d.token);location.reload()}}catch(e){{var m=document.getElementById('authMsg');if(m){{m.textContent=e.message;m.className='msg err';m.style.display='block'}}}}}}}});google.accounts.id.renderButton(b,{{theme:'outline',size:'large',shape:'rectangular',width:330,text:'signin_with'}});b.dataset.ready='1'}}}},100);setTimeout(function(){{clearInterval(wait)}},10000)}});</script>'''
+  html=html.replace('</body>',script+'</body>')
+ return HTMLResponse(html)
 @app.get('/api/health')
 def health():return {'ok':True,'service':'NovaTrade','mode':'paper','email_configured':email_configured(),'google_configured':bool(GOOGLE_CLIENT_ID)}
 @app.get('/api/auth/google-config')
@@ -163,9 +157,7 @@ def order(a:Order,u:int=Depends(uid)):
   nq=(h['qty']if h else 0)+a.qty;avg=((h['qty']*h['avg_price'])if h else 0)+cost;avg/=nq;c.execute('UPDATE portfolios SET cash=cash-? WHERE user_id=?',(cost,u));c.execute('INSERT INTO holdings(user_id,symbol,qty,avg_price)VALUES(?,?,?,?) ON CONFLICT(user_id,symbol)DO UPDATE SET qty=excluded.qty,avg_price=excluded.avg_price',(u,s,nq,avg))
  elif side=='SELL':
   if not h or h['qty']<a.qty:raise HTTPException(400,'Not enough holdings')
-  nq=h['qty']-a.qty;c.execute('UPDATE portfolios SET cash=cash+? WHERE user_id=?',(price*a.qty,u))
-  if nq:c.execute('UPDATE holdings SET qty=? WHERE user_id=? AND symbol=?',(nq,u,s))
-  else:c.execute('DELETE FROM holdings WHERE user_id=? AND symbol=?',(u,s))
+  nq=h['qty']-a.qty;c.execute('UPDATE portfolios SET cash=cash+? WHERE user_id=?',(price*a.qty,u));c.execute('UPDATE holdings SET qty=? WHERE user_id=? AND symbol=?',(nq,u,s)) if nq else c.execute('DELETE FROM holdings WHERE user_id=? AND symbol=?',(u,s))
  else:raise HTTPException(400,'Side must be BUY or SELL')
  c.execute('INSERT INTO orders(user_id,symbol,side,qty,price,status,mode,created_at)VALUES(?,?,?,?,?,?,?,?)',(u,s,side,a.qty,price,'FILLED','paper',datetime.now(timezone.utc).isoformat()));c.commit();return {'ok':True,'price':price}
 @app.get('/api/orders')
