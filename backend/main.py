@@ -38,7 +38,9 @@ def db():
     if 'google_sub' not in cols: c.execute('ALTER TABLE users ADD COLUMN google_sub TEXT')
     c.commit(); return c
 
-def token(uid): return jwt.encode({'sub':str(uid),'exp':datetime.now(timezone.utc)+timedelta(days=1)},SECRET,algorithm='HS256')
+def token(uid):
+    # JWT subject must be a string for strict PyJWT versions.
+    return jwt.encode({'sub':str(uid),'exp':datetime.now(timezone.utc)+timedelta(days=1)},SECRET,algorithm='HS256')
 
 def uid(auth: Optional[str]=Header(None)):
     if not auth or not auth.lower().startswith('bearer '): raise HTTPException(401,'Login required')
@@ -111,7 +113,7 @@ window.addEventListener('load',function(){
   const wait=setInterval(function(){
     if(window.google&&google.accounts&&google.accounts.id){
       clearInterval(wait);
-      google.accounts.id.initialize({client_id:'276524985958-ob60lul7vg9sl4n1vijdhfltk6ua0p8c.apps.googleusercontent.com',callback:window.handleNovaGoogle});
+      google.accounts.id.initialize({client_id:''' + repr(GOOGLE_CLIENT_ID) + ''',callback:window.handleNovaGoogle});
       google.accounts.id.renderButton(document.getElementById('googleBtn'),{theme:'outline',size:'large',shape:'rectangular',width:330,text:'signin_with'});
     }
   },100);
