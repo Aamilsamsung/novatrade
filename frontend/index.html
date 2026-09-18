@@ -38,6 +38,57 @@ body{background:radial-gradient(circle at 80% -10%,rgba(32,217,160,.08),transpar
 ::selection{background:rgba(32,217,160,.25)}
 ::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-track{background:#070b10}::-webkit-scrollbar-thumb{background:#263540;border-radius:10px}::-webkit-scrollbar-thumb:hover{background:#36505e}
 @media(max-width:720px){.side{background:#090e14}.top{background:rgba(9,14,20,.96)}}
+</style><style id="novatrade-premium-ui">
+/* Premium fintech UI layer — presentation only */
+:root{
+ --accent:#20d9a0;--accent-soft:rgba(32,217,160,.10);--panel:#0c1219;--panel-2:#101821;
+ --border:#1b2731;--text:#edf6f2;--sub:#8997a3;
+}
+body{letter-spacing:.01em}
+.authbox{position:relative;overflow:hidden;border-radius:26px;padding:34px;background:linear-gradient(180deg,rgba(15,23,31,.98),rgba(9,14,20,.98));border-color:#20303a}
+.authbox:before{content:"";position:absolute;inset:-45% 30% auto -30%;height:260px;background:radial-gradient(circle,rgba(32,217,160,.13),transparent 68%);pointer-events:none}
+.authbox>*{position:relative}
+.brand{letter-spacing:-.02em}.logo{box-shadow:0 0 0 1px rgba(32,217,160,.2),0 8px 25px rgba(32,217,160,.12)}
+.auth h1{letter-spacing:-.04em;font-weight:850}
+.btn{transition:transform .16s ease,background .16s ease,border-color .16s ease,box-shadow .16s ease}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.primary,.buy{box-shadow:0 8px 24px rgba(32,217,160,.14)}
+.side{background:linear-gradient(180deg,#090e14,#080c11);padding-top:22px}
+.side .brand{padding-bottom:30px}
+.nav{gap:7px}.nav button{border:1px solid transparent;padding:12px 13px}
+.nav button.active{box-shadow:inset 3px 0 var(--accent),0 6px 20px rgba(0,0,0,.12)}
+.top{height:72px;padding:0 30px;background:rgba(7,11,16,.86);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.search{background:#0a1016;box-shadow:inset 0 1px 0 rgba(255,255,255,.02)}
+.content{padding:28px 30px 40px}
+.hero{min-height:230px;padding:34px;background:radial-gradient(circle at 80% 20%,rgba(32,217,160,.18),transparent 28%),linear-gradient(120deg,#061c18,#07382d 55%,#075844);border:1px solid rgba(74,229,190,.13)}
+.hero>span{font-size:11px;letter-spacing:.12em;font-weight:900;color:#75e7c5}
+.hero h1{font-size:40px;letter-spacing:-.045em}
+.hero p{font-size:14px;line-height:1.7;color:#c5dcd4}
+.heroMoney{right:28px;bottom:28px;min-width:215px;padding:17px 20px;border-color:rgba(255,255,255,.10);box-shadow:0 16px 35px rgba(0,0,0,.18)}
+.metrics{gap:14px;margin:16px 0}
+.card{border-radius:17px;background:linear-gradient(180deg,#0d141b,#0b1117);box-shadow:0 14px 42px rgba(0,0,0,.20)}
+.metric{padding:19px}.metric strong{font-size:25px;letter-spacing:-.025em}
+.panel,.form,.setting{padding:20px}
+.panel h3,.form h3,.setting h3{font-size:16px;margin-top:0}
+.assetGrid{gap:14px}.asset{padding:17px;background:linear-gradient(180deg,#101820,#0c131a);border-color:#1d2b35}
+.assetPrice{font-size:21px;letter-spacing:-.025em}
+.assetActions .btn{border-radius:9px}
+.toolbar{margin-bottom:17px}.toolbar h1{font-size:30px;letter-spacing:-.04em}
+.chartLayout{grid-template-columns:minmax(0,1fr) 345px}.chartWrap{padding:21px}
+.chartTitle{font-size:22px;letter-spacing:-.03em}.chartPrice{font-size:29px;letter-spacing:-.04em}
+.chartCanvas{height:330px}
+.tradePanel .btn{border-radius:11px;font-size:13px;letter-spacing:.04em}
+.info{background:linear-gradient(180deg,#0e171f,#0a1117)}
+.rows .row{min-height:64px;padding:15px}
+.table th{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#72808b}
+.table td{padding:15px 12px}
+.botbox{background:linear-gradient(135deg,rgba(32,217,160,.10),rgba(32,217,160,.025));padding:18px}
+.botstats div{padding:12px}
+.field,.search{border-radius:10px}
+.badge{letter-spacing:.04em}
+.modal{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+@media(max-width:1100px){.hero h1{font-size:34px}.heroMoney{position:static;margin-top:20px;width:max-content}.hero{min-height:auto}.chartLayout{grid-template-columns:1fr}}
+@media(max-width:720px){.top{height:64px}.content{padding:16px 12px 28px}.hero{padding:23px;border-radius:17px}.hero h1{font-size:29px}.metrics{gap:9px}.metric{padding:14px}.metric strong{font-size:19px}.toolbar h1{font-size:25px}.chartWrap{padding:15px}.chartCanvas{height:255px}.profile b{display:none}}
 </style></head><body>
 <div id="auth" class="auth"><div class="authbox"><div class="brand"><div class="logo">N</div>NovaTrade</div><h1 id="authTitle">Welcome back</h1><p class="muted">A clean paper-trading workspace for stocks and crypto.</p><input id="name" class="field" placeholder="Full name" autocomplete="name" style="display:none"><input id="email" class="field" type="email" autocomplete="email" placeholder="Email address"><input id="pass" class="field" type="password" autocomplete="current-password" placeholder="Password"><button id="authBtn" class="btn primary" style="width:100%;margin-top:11px">Sign in</button><div class="or"><span>or continue with</span></div><div id="googleBtn" class="google"></div><button id="guestBtn" class="btn outline" style="width:100%;margin-top:10px">Continue as guest</button><div style="display:flex;justify-content:space-between;margin-top:8px"><button id="forgotBtn" class="link">Forgot password?</button><button id="switchBtn" class="link">Create account</button></div><div id="resendWrap" style="display:none;text-align:center"><button id="resendBtn" class="link">Resend confirmation email</button></div><div id="authMsg" class="msg"></div><p class="muted" style="font-size:11px;margin-top:18px">Paper trading only • virtual money • broker trading disabled</p></div></div>
 <div id="app" class="app"><aside class="side"><div class="brand"><div class="logo">N</div><span>NovaTrade</span></div><nav class="nav"><button class="active" data-tab="dashboard">⌂ <em>Dashboard</em></button><button data-tab="markets">◈ <em>Markets</em></button><button data-tab="trade">↗ <em>Trade</em></button><button data-tab="portfolio">▣ <em>Portfolio</em></button><button data-tab="bot">◉ <em>Bot Trading</em></button><button data-tab="orders">▤ <em>Orders</em></button><button data-tab="settings">⚙ <em>Settings</em></button></nav></aside><main class="main"><header class="top"><input id="globalSearch" class="search" placeholder="Search stocks or crypto…"><div class="profile"><div id="avatar" class="avatar">N</div><b id="profileName">Trader</b><button class="btn outline" onclick="logout()">Logout</button></div></header><div class="content">
