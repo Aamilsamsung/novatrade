@@ -89,6 +89,45 @@ body{letter-spacing:.01em}
 .modal{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 @media(max-width:1100px){.hero h1{font-size:34px}.heroMoney{position:static;margin-top:20px;width:max-content}.hero{min-height:auto}.chartLayout{grid-template-columns:1fr}}
 @media(max-width:720px){.top{height:64px}.content{padding:16px 12px 28px}.hero{padding:23px;border-radius:17px}.hero h1{font-size:29px}.metrics{gap:9px}.metric{padding:14px}.metric strong{font-size:19px}.toolbar h1{font-size:25px}.chartWrap{padding:15px}.chartCanvas{height:255px}.profile b{display:none}}
+</style><style id="novatrade-final-polish">
+/* Final UI polish — presentation only */
+:root{--glow:rgba(32,217,160,.16)}
+body{min-width:320px}
+.side:after{content:"PAPER MODE";position:absolute;left:14px;right:14px;bottom:18px;padding:9px 10px;text-align:center;border:1px solid #1c332d;border-radius:9px;color:#63dcb9;font-size:9px;font-weight:900;letter-spacing:.12em;background:rgba(32,217,160,.045)}
+.nav button{position:relative;display:flex;align-items:center;gap:10px}
+.nav button:first-letter{font-size:17px}
+.nav button.active:after{content:"";position:absolute;right:10px;width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
+.top{box-shadow:0 1px 0 rgba(255,255,255,.015)}
+.profile .outline{white-space:nowrap}
+.hero:after{content:"";position:absolute;width:320px;height:320px;right:-120px;top:-150px;border:1px solid rgba(116,241,206,.09);border-radius:50%;box-shadow:0 0 0 55px rgba(116,241,206,.025),0 0 0 110px rgba(116,241,206,.018);pointer-events:none}
+.hero>*{position:relative;z-index:1}
+.metric{position:relative;overflow:hidden}
+.metric:after{content:"";position:absolute;right:-25px;bottom:-35px;width:90px;height:90px;border-radius:50%;background:var(--glow);filter:blur(10px);pointer-events:none}
+.asset{position:relative;overflow:hidden}
+.asset:before{content:"";position:absolute;inset:0 auto 0 0;width:2px;background:transparent}
+.asset:hover:before{background:var(--accent);box-shadow:0 0 18px var(--accent)}
+.assetActions .buy,.assetActions .sell{min-width:46px}
+.card{transition:border-color .18s ease,transform .18s ease,box-shadow .18s ease}
+.card:hover{border-color:#263944}
+.form .info b,.panel>h3{letter-spacing:-.01em}
+.badge{white-space:nowrap}
+button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:720px){
+ .side:after{left:7px;right:7px;font-size:0;padding:5px}
+ .side:after{content:"•";font-size:15px}
+ .nav button{justify-content:center;padding:12px 7px}
+ .nav button.active:after{right:4px}
+ .top .search{min-width:0}
+ .profile{gap:6px}
+ .profile .avatar{width:32px;height:32px}
+ .profile .outline{padding:8px 9px;font-size:11px}
+ .heroMoney{margin-top:15px}
+ .chartHeader{flex-direction:column}
+ .chartHeader>div:last-child{text-align:left!important}
+ .range{margin-top:10px;overflow:auto}
+ .range button{flex:0 0 auto}
+ .rows .row{grid-template-columns:1.4fr .65fr .9fr}
+}
 </style></head><body>
 <div id="auth" class="auth"><div class="authbox"><div class="brand"><div class="logo">N</div>NovaTrade</div><h1 id="authTitle">Welcome back</h1><p class="muted">A clean paper-trading workspace for stocks and crypto.</p><input id="name" class="field" placeholder="Full name" autocomplete="name" style="display:none"><input id="email" class="field" type="email" autocomplete="email" placeholder="Email address"><input id="pass" class="field" type="password" autocomplete="current-password" placeholder="Password"><button id="authBtn" class="btn primary" style="width:100%;margin-top:11px">Sign in</button><div class="or"><span>or continue with</span></div><div id="googleBtn" class="google"></div><button id="guestBtn" class="btn outline" style="width:100%;margin-top:10px">Continue as guest</button><div style="display:flex;justify-content:space-between;margin-top:8px"><button id="forgotBtn" class="link">Forgot password?</button><button id="switchBtn" class="link">Create account</button></div><div id="resendWrap" style="display:none;text-align:center"><button id="resendBtn" class="link">Resend confirmation email</button></div><div id="authMsg" class="msg"></div><p class="muted" style="font-size:11px;margin-top:18px">Paper trading only • virtual money • broker trading disabled</p></div></div>
 <div id="app" class="app"><aside class="side"><div class="brand"><div class="logo">N</div><span>NovaTrade</span></div><nav class="nav"><button class="active" data-tab="dashboard">⌂ <em>Dashboard</em></button><button data-tab="markets">◈ <em>Markets</em></button><button data-tab="trade">↗ <em>Trade</em></button><button data-tab="portfolio">▣ <em>Portfolio</em></button><button data-tab="bot">◉ <em>Bot Trading</em></button><button data-tab="orders">▤ <em>Orders</em></button><button data-tab="settings">⚙ <em>Settings</em></button></nav></aside><main class="main"><header class="top"><input id="globalSearch" class="search" placeholder="Search stocks or crypto…"><div class="profile"><div id="avatar" class="avatar">N</div><b id="profileName">Trader</b><button class="btn outline" onclick="logout()">Logout</button></div></header><div class="content">
