@@ -174,9 +174,35 @@ body{background:#030913;color:var(--nt-text);font-family:Inter,ui-sans-serif,sys
 @media(max-width:1200px){.nt-main-grid{grid-template-columns:1fr}.nt-right{grid-template-columns:repeat(3,1fr)}.nt-paper{grid-column:1/-1}.nt-metrics{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:850px){.nt-right,.nt-bottom-grid{grid-template-columns:1fr}.nt-hero-art{width:35%}.nt-hero-copy{display:none}.nt-metrics{grid-template-columns:1fr 1fr}.nt-chart-head{align-items:flex-start}.nt-chart-tools{justify-content:flex-end}.nt-live-price{font-size:19px}}
 @media(max-width:720px){.side{width:68px}.side .brand span{display:none}.main{margin-left:68px}.content{padding:12px}.top{padding:0 10px}.top .search{width:52vw}.nt-profile-text,.top .outline{display:none}.nt-ticker{gap:25px}.nt-welcome{min-height:145px}.nt-hero-art{opacity:.5;width:50%}.nt-metrics{grid-template-columns:1fr 1fr;gap:8px}.nt-metric{padding:12px}.nt-metric strong{font-size:17px}.nt-chart-head{flex-direction:column}.nt-chart-tools{justify-content:flex-start}.nt-bottom-grid{grid-template-columns:1fr}.nt-order-row{grid-template-columns:1fr}.nt-dashboard-chart{height:245px}.nt-dashboard-chart svg{height:215px}.nt-stock-head,.nt-stock-list>div{grid-template-columns:1.4fr .9fr .8fr}.nt-stock-head span:last-child,.nt-stock-list>div span:last-child{display:none}}
+</style><style id="novatrade-same-reference">
+/* High-fidelity reference layout pass — UI only */
+.nt-new{font-size:8px;padding:3px 5px;border-radius:4px;background:#3158ff;color:#fff;margin-left:auto;letter-spacing:.04em}
+.side{width:230px;padding:18px 14px}.side .brand{padding:0 10px 30px}.side .brand span{font-size:23px}
+.main{margin-left:230px}.top{height:58px;padding:0 18px}.top .search{height:36px;width:395px}.profile .outline{display:none}
+.content{padding:22px 24px 28px;max-width:none}.nt-welcome{min-height:170px;border-radius:16px;padding:22px 24px;margin-bottom:12px}.nt-welcome h1{font-size:25px}.nt-welcome p{font-size:13px}.nt-hero-art{width:38%;right:0}
+.nt-metrics{grid-template-columns:repeat(4,1fr);margin:0 0 14px;gap:12px}.nt-metric{min-height:98px;padding:15px 16px;border-radius:12px}.nt-metric strong{font-size:22px}.nt-metric span{font-size:10px}
+.nt-main-grid{grid-template-columns:minmax(0,1fr) 325px;gap:14px}.nt-chart-card{border-radius:13px;padding:12px}.nt-chart-head{min-height:56px}.nt-asset-logo{width:34px;height:34px}.nt-asset-title b{font-size:16px}.nt-live-price{font-size:22px;margin-top:4px}.nt-chart-tools{gap:4px}.nt-range{padding:6px 8px}.nt-dashboard-chart{height:286px}.nt-bottom-grid{grid-template-columns:1.03fr .97fr;gap:12px}.nt-table-card,.nt-order-card,.nt-side-card{border-radius:13px;padding:13px}
+.nt-stock-list>div{padding:8px 4px}.nt-stock-head,.nt-stock-list>div{grid-template-columns:1.5fr .9fr 1fr .65fr}.nt-order-price{font-size:22px}.nt-buy-sell button{padding:9px}.nt-place{font-size:11px}
+.nt-right{gap:11px}.nt-side-card{min-height:0}.nt-watch-row,.nt-mover-row,.nt-recent-row{padding:8px 2px;font-size:9px}.nt-paper{padding:11px}
+.nt-ai-strip{height:52px;margin-top:11px}
+.nt-ticker{height:31px;gap:42px;padding:0 20px;font-size:9px}
+.nt-ticker span{display:inline-flex;align-items:center}.nt-ticker b{margin-left:7px}
+.nt-icon-btn{font-size:18px}
+@media(max-width:1200px){.nt-main-grid{grid-template-columns:1fr}.nt-right{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){.nt-right{grid-template-columns:1fr 1fr}.nt-metrics{grid-template-columns:1fr 1fr}}
+@media(max-width:720px){.side{width:68px}.main{margin-left:68px}.content{padding:12px}.nt-metrics{grid-template-columns:1fr 1fr}.nt-right{grid-template-columns:1fr}.nt-bottom-grid{grid-template-columns:1fr}.nt-welcome{min-height:145px}.nt-hero-art{width:48%;opacity:.6}.nt-ticker{gap:20px}}
 </style></head><body>
 <div id="auth" class="auth"><div class="authbox"><div class="brand"><div class="logo">N</div>NovaTrade</div><h1 id="authTitle">Welcome back</h1><p class="muted">A clean paper-trading workspace for stocks and crypto.</p><input id="name" class="field" placeholder="Full name" autocomplete="name" style="display:none"><input id="email" class="field" type="email" autocomplete="email" placeholder="Email address"><input id="pass" class="field" type="password" autocomplete="current-password" placeholder="Password"><button id="authBtn" class="btn primary" style="width:100%;margin-top:11px">Sign in</button><div class="or"><span>or continue with</span></div><div id="googleBtn" class="google"></div><button id="guestBtn" class="btn outline" style="width:100%;margin-top:10px">Continue as guest</button><div style="display:flex;justify-content:space-between;margin-top:8px"><button id="forgotBtn" class="link">Forgot password?</button><button id="switchBtn" class="link">Create account</button></div><div id="resendWrap" style="display:none;text-align:center"><button id="resendBtn" class="link">Resend confirmation email</button></div><div id="authMsg" class="msg"></div><p class="muted" style="font-size:11px;margin-top:18px">Paper trading only • virtual money • broker trading disabled</p></div></div>
-<div id="app" class="app"><aside class="side"><div class="brand"><div class="logo">N</div><span>NovaTrade</span></div><nav class="nav"><button class="active" data-tab="dashboard">⌂ <em>Dashboard</em></button><button data-tab="markets">◈ <em>Markets</em></button><button data-tab="trade">↗ <em>Trade</em></button><button data-tab="portfolio">▣ <em>Portfolio</em></button><button data-tab="bot">◉ <em>Bot Trading</em></button><button data-tab="orders">▤ <em>Orders</em></button><button data-tab="settings">⚙ <em>Settings</em></button></nav></aside><main class="main"><header class="top"><div class="nt-brand-mobile"><div class="logo">N</div></div><input id="globalSearch" class="search" placeholder="Search stocks, crypto, or companies…"><div class="profile"><button class="nt-icon-btn" type="button">☾</button><button class="nt-icon-btn" type="button">♧</button><div id="avatar" class="avatar">N</div><div class="nt-profile-text"><b id="profileName">Trader</b><small>Paper Trading</small></div><button class="btn outline" onclick="logout()">Logout</button></div></header><div class="nt-ticker"><span>NIFTY 50 <b>24,892.65</b> <i>▲ +1.23%</i></span><span>SENSEX <b>81,045.72</b> <i>▲ +1.18%</i></span><span>RELIANCE <b>₹1,421.20</b> <i>▲ +0.42%</i></span><span>TCS <b>₹3,542.30</b> <i>▲ +1.76%</i></span><span>INFY <b>₹1,467.50</b> <i>▲ +1.32%</i></span><span>HDFCBANK <b>₹1,698.25</b> <i>▲ +0.88%</i></span></div><div class="content">
+<div id="app" class="app"><aside class="side"><div class="brand"><div class="logo">N</div><span>NovaTrade</span></div><nav class="nav">
+<button class="active" data-tab="dashboard">⌂ <em>Dashboard</em></button>
+<button data-tab="markets">♧ <em>Markets</em></button>
+<button data-tab="portfolio">▣ <em>Portfolio</em></button>
+<button data-tab="bot">◉ <em>AI Trader</em> <small class="nt-new">NEW</small></button>
+<button data-tab="orders">▤ <em>Orders</em></button>
+<button data-tab="markets">☆ <em>Watchlist</em></button>
+<button data-tab="portfolio">◫ <em>Analytics</em></button>
+<button data-tab="settings">⚙ <em>Settings</em></button>
+</nav></aside><main class="main"><header class="top"><div class="nt-brand-mobile"><div class="logo">N</div></div><input id="globalSearch" class="search" placeholder="Search stocks, crypto, or companies…"><div class="profile"><button class="nt-icon-btn" type="button">☾</button><button class="nt-icon-btn" type="button">♧</button><div id="avatar" class="avatar">N</div><div class="nt-profile-text"><b id="profileName">Trader</b><small>Paper Trading</small></div><button class="btn outline" onclick="logout()">Logout</button></div></header><div class="nt-ticker"><span>NIFTY 50 <b>24,892.65</b> <i>▲ +1.23%</i></span><span>SENSEX <b>81,045.72</b> <i>▲ +1.18%</i></span><span>RELIANCE <b>₹1,421.20</b> <i>▲ +0.42%</i></span><span>TCS <b>₹3,542.30</b> <i>▲ +1.76%</i></span><span>INFY <b>₹1,467.50</b> <i>▲ +1.32%</i></span><span>HDFCBANK <b>₹1,698.25</b> <i>▲ +0.88%</i></span></div><div class="content">
 <section id="dashboard" class="tab active">
 <div class="nt-welcome"><div><div class="nt-kicker">PAPER TRADING WORKSPACE</div><h1>Good Evening, <span id="ntWelcomeName">Trader</span> 👋</h1><p>Here's what's happening with your portfolio today.</p></div><div class="nt-hero-art"><div class="nt-orbit o1"></div><div class="nt-orbit o2"></div><div class="nt-orbit o3"></div><div class="nt-bull">◆</div><div class="nt-hero-copy"><b>Discipline<br>Builds Wealth</b><span>Better decisions.<br>Bigger opportunities.</span></div></div></div>
 <div class="nt-metrics">
@@ -240,5 +266,26 @@ const $=id=>document.getElementById(id);let token=localStorage.getItem('nt'),sig
   try{const o=await api('/api/orders');$('ntRecentOrders').innerHTML=o.slice(0,4).map(x=>'<div class="nt-recent-row"><span class="badge">'+x.side+'</span><b>'+x.symbol+'</b><span>'+x.qty+'</span><span>'+money(x.price)+'</span></div>').join('')||'<div class="muted">No paper orders yet.</div>'}catch{}
   const observer=new MutationObserver(()=>{const n=$('profileName')?.textContent;if(n&&$('ntWelcomeName'))$('ntWelcomeName').textContent=n});
   observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+})();
+</script><script id="novatrade-reference-sync">
+(function(){
+  const refRender=async function(){
+    try{
+      const rows=await getStocks();
+      const list=rows.slice(0,5);
+      if($('dashAssets')) $('dashAssets').innerHTML=list.map(a=>'<div><span class="nt-sym">'+a.symbol+'</span><span>'+money(a.price)+'</span><span class="up">▲ '+(a.change||0).toFixed(2)+'%</span><span class="nt-mini-spark">╱╲╱</span></div>').join('');
+      if($('ntWatchlist')) $('ntWatchlist').innerHTML=rows.slice(0,6).map(a=>'<div class="nt-watch-row"><b>'+a.symbol+'</b><span>'+money(a.price)+'</span><span class="up">▲ '+(a.change||0).toFixed(2)+'%</span></div>').join('');
+      if($('ntMovers')) $('ntMovers').innerHTML=rows.slice(0,5).map(a=>'<div class="nt-mover-row"><b>'+a.symbol+'</b><span>'+money(a.price)+'</span><span class="up">▲ '+(a.change||0).toFixed(2)+'%</span></div>').join('');
+    }catch(e){}
+    try{
+      const o=await api('/api/orders');
+      if($('ntRecentOrders')) $('ntRecentOrders').innerHTML=o.slice(0,4).map(x=>'<div class="nt-recent-row"><span class="badge">'+x.side+'</span><b>'+x.symbol+'</b><span>'+x.qty+'</span><span>'+money(x.price)+'</span></div>').join('')||'<div class="muted">No paper orders yet.</div>';
+    }catch(e){}
+  };
+  window.renderDashboardAssets=refRender;
+  setTimeout(refRender,300);
+  setInterval(refRender,7000);
+  document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+  const n=localStorage.getItem('nt');
 })();
 </script></body></html>
