@@ -208,6 +208,15 @@ body{background:#030913;color:var(--nt-text);font-family:Inter,ui-sans-serif,sys
 .auth .msg{border:1px solid #1b554c;background:#09211e;color:#6ff0cb}.auth .msg.err{border-color:#633043;background:#220d17;color:#ff8ca0}.google{min-height:42px}
 @media(max-width:820px){.auth-shell{grid-template-columns:1fr;max-width:480px}.auth-visual{display:none}.authbox{padding:38px 28px;border-radius:22px}.auth-brand-mobile{display:flex;margin-bottom:30px}.auth-shell{min-height:auto}.auth{padding:16px}}
 @media(max-width:460px){.authbox{padding:28px 20px}.auth h1{font-size:27px}.auth-links{gap:8px}.auth-links .link{font-size:12px}}
+</style><style id="novatrade-auth-click-fix">
+.auth{position:relative;z-index:1000}
+.auth-shell{position:relative;z-index:1001;pointer-events:auto}
+.authbox{position:relative;z-index:1003;pointer-events:auto}
+.authbox *{pointer-events:auto}
+.auth-visual:before,.auth-orb,.auth-orb-a,.auth-orb-b{pointer-events:none}
+.auth-visual{z-index:1}
+.authbox button,.authbox input{position:relative;z-index:1005;cursor:pointer}
+.authbox button:disabled{cursor:not-allowed}
 </style></head><body>
 <div id="auth" class="auth">
   <div class="auth-shell">
@@ -422,5 +431,20 @@ const $=id=>document.getElementById(id);let token=localStorage.getItem('nt'),sig
   ['email','pass','name','resetPass','resetPass2'].forEach(id=>el(id)?.addEventListener('keydown',e=>{if(e.key==='Enter')submit()}));
   if(resetToken){setMode('reset');}
   else{setMode('login');}
+})();
+</script><script id="novatrade-auth-click-fix-js">
+(function(){
+ const q=id=>document.getElementById(id);
+ const guest=q('guestBtn');
+ if(guest) guest.onclick=function(e){
+   e.preventDefault(); e.stopPropagation();
+   window.guest=true; window.token=null; localStorage.removeItem('nt');
+   const auth=q('auth'),app=q('app');
+   if(auth)auth.style.display='none';
+   if(app)app.style.display='block';
+   if(q('profileName'))q('profileName').textContent='Guest Demo';
+   if(q('avatar'))q('avatar').textContent='G';
+   if(typeof window.loadDashboard==='function')window.loadDashboard();
+ };
 })();
 </script></body></html>
