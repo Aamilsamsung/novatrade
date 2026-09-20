@@ -456,32 +456,22 @@ const $=id=>document.getElementById(id);let token=localStorage.getItem('nt'),sig
 .auth-shell>.authbox *{pointer-events:auto}
 .auth-shell>.authbox button,.auth-shell>.authbox input{touch-action:manipulation}
 </style>
-<script id="novatrade-auth-final-bind">
+<script id="novatrade-auth-final-guest">
 (function(){
   const q=id=>document.getElementById(id);
-  const showAuth=()=>{if(q('auth'))q('auth').style.display='grid';if(q('app'))q('app').style.display='none'};
-  const showApp=()=>{if(q('auth'))q('auth').style.display='none';if(q('app'))q('app').style.display='block'};
-  const runGuest=async function(e){
-    if(e){e.preventDefault();e.stopPropagation();}
+  const guestBtn=q('guestBtn');
+  if(guestBtn) guestBtn.onclick=async function(e){
+    e.preventDefault();
+    e.stopPropagation();
     guest=true;
     token=null;
     localStorage.removeItem('nt');
-    showApp();
+    if(q('auth'))q('auth').style.display='none';
+    if(q('app'))q('app').style.display='block';
     if(q('profileName'))q('profileName').textContent='Guest Demo';
     if(q('avatar'))q('avatar').textContent='G';
-    try{await loadDashboard();}catch(err){authMsg(err.message||'Guest dashboard could not load.',true);}
+    try{await loadDashboard();}catch(err){toast(err.message||'Guest dashboard could not load.');}
   };
-  const bind=()=>{
-    const authBtn=q('authBtn'),switchBtn=q('switchBtn'),forgotBtn=q('forgotBtn'),guestBtn=q('guestBtn'),resendBtn=q('resendBtn');
-    if(authBtn)authBtn.onclick=()=>submit();
-    if(switchBtn)switchBtn.onclick=()=>setMode(mode==='login'?'signup':'login');
-    if(forgotBtn)forgotBtn.onclick=()=>setMode('forgot');
-    if(resendBtn)resendBtn.onclick=()=>resendVerification();
-    if(guestBtn)guestBtn.onclick=runGuest;
-    window.__novaAuthReady=!!(authBtn&&switchBtn&&forgotBtn&&guestBtn);
-  };
-  /* Rebind after every earlier auth script has finished assigning handlers. */
-  bind();
-  showAuth();
+  window.__novaAuthReady=!!(q('authBtn')&&q('switchBtn')&&q('forgotBtn')&&q('guestBtn'));
 })();
 </script></body></html>
