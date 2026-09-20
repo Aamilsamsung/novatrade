@@ -447,4 +447,41 @@ const $=id=>document.getElementById(id);let token=localStorage.getItem('nt'),sig
    if(typeof window.loadDashboard==='function')window.loadDashboard();
  };
 })();
+</script><style id="novatrade-auth-hitbox-fix">
+/* Auth hitbox isolation: decorative/visual layer can never intercept auth controls. */
+.auth{position:relative;isolation:isolate;pointer-events:auto}
+.auth-shell{position:relative;isolation:isolate;z-index:10;pointer-events:auto}
+.auth-shell>.auth-visual{position:relative;z-index:0;pointer-events:none}
+.auth-shell>.authbox{position:relative;z-index:20;pointer-events:auto}
+.auth-shell>.authbox *{pointer-events:auto}
+.auth-shell>.authbox button,.auth-shell>.authbox input{touch-action:manipulation}
+</style>
+<script id="novatrade-auth-final-bind">
+(function(){
+  const q=id=>document.getElementById(id);
+  const showAuth=()=>{if(q('auth'))q('auth').style.display='grid';if(q('app'))q('app').style.display='none'};
+  const showApp=()=>{if(q('auth'))q('auth').style.display='none';if(q('app'))q('app').style.display='block'};
+  const runGuest=async function(e){
+    if(e){e.preventDefault();e.stopPropagation();}
+    guest=true;
+    token=null;
+    localStorage.removeItem('nt');
+    showApp();
+    if(q('profileName'))q('profileName').textContent='Guest Demo';
+    if(q('avatar'))q('avatar').textContent='G';
+    try{await loadDashboard();}catch(err){authMsg(err.message||'Guest dashboard could not load.',true);}
+  };
+  const bind=()=>{
+    const authBtn=q('authBtn'),switchBtn=q('switchBtn'),forgotBtn=q('forgotBtn'),guestBtn=q('guestBtn'),resendBtn=q('resendBtn');
+    if(authBtn)authBtn.onclick=()=>submit();
+    if(switchBtn)switchBtn.onclick=()=>setMode(mode==='login'?'signup':'login');
+    if(forgotBtn)forgotBtn.onclick=()=>setMode('forgot');
+    if(resendBtn)resendBtn.onclick=()=>resendVerification();
+    if(guestBtn)guestBtn.onclick=runGuest;
+    window.__novaAuthReady=!!(authBtn&&switchBtn&&forgotBtn&&guestBtn);
+  };
+  /* Rebind after every earlier auth script has finished assigning handlers. */
+  bind();
+  showAuth();
+})();
 </script></body></html>
