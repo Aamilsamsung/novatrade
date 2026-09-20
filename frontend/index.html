@@ -432,21 +432,6 @@ const $=id=>document.getElementById(id);let token=localStorage.getItem('nt'),sig
   if(resetToken){setMode('reset');}
   else{setMode('login');}
 })();
-</script><script id="novatrade-auth-click-fix-js">
-(function(){
- const q=id=>document.getElementById(id);
- const guest=q('guestBtn');
- if(guest) guest.onclick=function(e){
-   e.preventDefault(); e.stopPropagation();
-   window.guest=true; window.token=null; localStorage.removeItem('nt');
-   const auth=q('auth'),app=q('app');
-   if(auth)auth.style.display='none';
-   if(app)app.style.display='block';
-   if(q('profileName'))q('profileName').textContent='Guest Demo';
-   if(q('avatar'))q('avatar').textContent='G';
-   if(typeof window.loadDashboard==='function')window.loadDashboard();
- };
-})();
 </script><style id="novatrade-auth-hitbox-fix">
 /* Auth hitbox isolation: decorative/visual layer can never intercept auth controls. */
 .auth{position:relative;isolation:isolate;pointer-events:auto}
